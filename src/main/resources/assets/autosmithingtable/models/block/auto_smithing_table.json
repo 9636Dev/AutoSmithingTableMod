@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "autosmithingtable:block/auto_smithing_table_front",
+    "north": "autosmithingtable:block/auto_smithing_table_front",
+    "south": "autosmithingtable:block/auto_smithing_table_front",
+    "east": "autosmithingtable:block/auto_smithing_table_side",
+    "west": "autosmithingtable:block/auto_smithing_table_side",
+    "up": "autosmithingtable:block/auto_smithing_table_top",
+    "down": "autosmithingtable:block/auto_smithing_table_bottom"
+  }
+}
