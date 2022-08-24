@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.parchmentmc:librarian:1.+'
+        classpath 'org.spongepowered:mixingradle:0.7.+'
     }
 }
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -17,6 +18,7 @@ plugins {
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'org.spongepowered.mixin'
 
 version = '1.0'
 group = 'io.github.hw9636.autosmithingtable' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -146,6 +148,7 @@ repositories {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18.2-40.1.0'
 
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     // compile against the JEI API but do not include it at runtime
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
     // at runtime, use the full JEI jar
@@ -154,6 +157,10 @@ dependencies {
     implementation fg.deobf("curse.maven:the-one-probe-245211:${top_version}")
 
     runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
+
+}
+
+mixin {
 
 }
 

@@ -2,6 +2,7 @@ package io.github.hw9636.autosmithingtable.common;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.data.recipes.UpgradeRecipeBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -50,12 +51,6 @@ public class AutoSmithingTableEntity extends BlockEntity implements IEnergyStora
     }
 
     public void serverTick() {
-
-//        assert this.level != null;
-//        this.level.getRecipeManager().getAllRecipesFor(RecipeType.SMITHING).stream().anyMatch((upgradeRecipe -> {
-//            logger.info(upgradeRecipe.getIngredients().get(0));
-//            return false;
-//        }));
 
 
         if (requiresUpdate) {
