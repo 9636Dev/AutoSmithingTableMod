@@ -1,3 +1,9 @@
+This is the official autosmithingtablemod git
+
+
+
+
+
 
 Source installation information for modders
 -------------------------------------------
