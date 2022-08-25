@@ -24,9 +24,12 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
         this.containerAccess = ContainerLevelAccess.create(playerInv.player.level, pos);
         this.data = data;
 
-        this.addSlot(new SlotItemHandler(slots, AutoSmithingTableEntity.INPUT_SLOT, 27, 47));
-        this.addSlot(new SlotItemHandler(slots,  AutoSmithingTableEntity.EXTRA_SLOT, 76, 47));
-        this.addSlot(new SlotItemHandler(slots,  AutoSmithingTableEntity.OUTPUT_SLOT, 134, 47) {
+
+        addDataSlots(data);
+
+        this.addSlot(new SlotItemHandler(slots, AutoSmithingTableBlockEntity.INPUT_SLOT, 27, 47));
+        this.addSlot(new SlotItemHandler(slots,  AutoSmithingTableBlockEntity.EXTRA_SLOT, 76, 47));
+        this.addSlot(new SlotItemHandler(slots,  AutoSmithingTableBlockEntity.OUTPUT_SLOT, 134, 47) {
             public boolean mayPlace(ItemStack p_39818_) {
                 return false;
             }
@@ -44,11 +47,33 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(Player pPlayer) {
-        return false;
+    public boolean stillValid(Player player) {
+        return stillValid(this.containerAccess, player, Registries.AUTO_SMITHING_TABLE.get());
     }
 
-    public static MenuConstructor getServerContainer(AutoSmithingTableEntity entity, BlockPos pos) {
+    public static MenuConstructor getServerContainer(AutoSmithingTableBlockEntity entity, BlockPos pos) {
         return (id, playerInv, player) -> new AutoSmithingContainer(id, playerInv, entity.inventory, pos, new AutoSmithingContainerData(entity, 3));
+    }
+
+    @Override
+    public ItemStack quickMoveStack(Player player, int index) {
+        ItemStack returnStack = ItemStack.EMPTY;
+        final Slot slot = getSlot(index);
+        if (slot.hasItem()) {
+            final ItemStack item = slot.getItem();
+            returnStack = item.copy();
+            if (index < 27) {
+                if (!moveItemStackTo(item, 27, this.slots.size(), true))
+                    return ItemStack.EMPTY;
+            } else if (!moveItemStackTo(item, 0, 27, false))
+                return ItemStack.EMPTY;
+
+            if (item.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            } else {
+                slot.setChanged();
+            }
+        }
+        return returnStack;
     }
 }

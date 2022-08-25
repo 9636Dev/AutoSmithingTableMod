@@ -1,7 +1,6 @@
 package io.github.hw9636.autosmithingtable.common;
 
 import io.github.hw9636.autosmithingtable.AutoSmithingTableMod;
-import io.github.hw9636.autosmithingtable.common.AutoSmithingTableBlock;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -35,8 +34,8 @@ public class Registries {
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, AutoSmithingTableMod.MOD_ID);
 
-    public static final RegistryObject<BlockEntityType<AutoSmithingTableEntity>> AUTO_SMITHING_TABLE_ENTITY_TYPE = BLOCK_ENTITIES.register("auto_smithing_table",
-            () -> BlockEntityType.Builder.of(AutoSmithingTableEntity::new, AUTO_SMITHING_TABLE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<AutoSmithingTableBlockEntity>> AUTO_SMITHING_TABLE_ENTITY_TYPE = BLOCK_ENTITIES.register("auto_smithing_table",
+            () -> BlockEntityType.Builder.of(AutoSmithingTableBlockEntity::new, AUTO_SMITHING_TABLE.get()).build(null));
 
     public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, AutoSmithingTableMod.MOD_ID);
 
