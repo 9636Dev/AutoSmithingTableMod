@@ -29,7 +29,7 @@ displayName="Auto Smithing Table" #mandatory
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="autosmithingtable.png" #optional
 # A text field displayed in the mod UI
-authors="9636Dev"
+authors="9636Dev (HW9636 on github), Gurkysword12"
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 Auto Smithing Table Mod
