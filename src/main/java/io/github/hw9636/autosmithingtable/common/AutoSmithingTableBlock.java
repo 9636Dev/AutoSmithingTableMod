@@ -15,8 +15,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AutoSmithingTableBlock extends Block implements EntityBlock {
@@ -28,7 +28,7 @@ public class AutoSmithingTableBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level level, BlockPos pos, Player player, InteractionHand pHand, BlockHitResult pHit) {
+    public @NotNull InteractionResult use(@NotNull BlockState pState, Level level, BlockPos pos, @NotNull Player player, InteractionHand pHand, BlockHitResult pHit) {
 
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof AutoSmithingTableBlockEntity) {
             final AutoSmithingTableBlockEntity be = (AutoSmithingTableBlockEntity) level.getBlockEntity(pos);

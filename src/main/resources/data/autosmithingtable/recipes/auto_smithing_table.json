@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "^@^",
+    "$%$",
+    "#@#"
+  ],
+  "key": {
+    "^": {
+      "item": "minecraft:redstone_torch"
+    },
+    "@": {
+      "item": "minecraft:gold_ingot"
+    },
+    "$": {
+      "item": "minecraft:smithing_table"
+    },
+    "%": {
+      "item": "minecraft:diamond"
+    },
+    "#": {
+      "item": "minecraft:stone"
+    }
+  },
+  "result": {
+    "item": "autosmithingtable:auto_smithing_table"
+  }
+}

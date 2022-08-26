@@ -54,14 +54,9 @@ public class AutoSmithingTableScreen extends AbstractContainerScreen<AutoSmithin
         RenderSystem.setShaderTexture(0, TEXTURE);
         this.blit(stack, i, j, 0, 0, this.imageWidth, this.imageHeight);
 
-        // Arrow: 100, 46 to 127, 66
-        // Full: 177, 1 to 204, 21
-
         this.blit(stack, i + 100, j + 46, 177,1,mapNum(menu.data.get(1),ASTConfig.COMMON.ticksPerCraft.get(),27),20);
 
         int mappedY = mapNum(menu.data.get(0), ASTConfig.COMMON.maxEnergyStored.get(), 79 - 8);
         this.blit(stack, i + 164, j + 8 + 71 - mappedY, 177, 22 + 71 - mappedY, 4, mappedY);
-
-        this.font.draw(stack, this.playerInventoryTitle, i + 20, j + 75, 0x404040);
     }
 }

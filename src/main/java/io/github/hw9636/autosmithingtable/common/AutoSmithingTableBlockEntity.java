@@ -19,14 +19,10 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergyStorage {
-
-    public static final Logger logger = LogManager.getLogger();
     public static final int INVENTORY_SLOTS = 3;
     public static final int INPUT_SLOT = 0;
     public static final int EXTRA_SLOT = 1;
@@ -58,19 +54,24 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
         return base.test(getItemInSlot(0)) && addition.test(getItemInSlot(1));
     }
 
-    public void serverTick() {
+    private boolean canInsert(ItemStack beforeInsert, ItemStack toInsert) {
+        return beforeInsert.isEmpty() || (beforeInsert.is(toInsert.getItem()) && beforeInsert.getCount() + toInsert.getCount() <= beforeInsert.getMaxStackSize());
+    }
 
-        if (this.currentRecipe != null) {
+    public void serverTick() {
+        if (level == null || level.isClientSide) return;
+
+        if (this.currentRecipe != null && canInsert(getItemInSlot(2), this.currentRecipe.getResult())) {
             if (FEStored >= ASTConfig.COMMON.energyPerTick.get()) {
                 FEStored -= ASTConfig.COMMON.energyPerTick.get();
 
                 if (++progress == ASTConfig.COMMON.ticksPerCraft.get()) {
                     progress = 0;
 
-                    if (insertItem(-2, currentRecipe.getResult()).isEmpty()) {
+                    if (insertItem(-2, currentRecipe.getResult().copy()).isEmpty()) {
                         getItemInSlot(0).shrink(1);
                         getItemInSlot(1).shrink(1);
-                        currentRecipe = level == null ? null : UpgradeRecipeIngredients.fromItemstacks(level, getItemInSlot(0), getItemInSlot(1));
+                        currentRecipe = UpgradeRecipeIngredients.fromItemstacks(level, getItemInSlot(0), getItemInSlot(1));
                     }
                 }
             }
@@ -215,10 +216,8 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
                 if (slot == -2) return super.insertItem(OUTPUT_SLOT,stack,simulate);
                 if (slot == OUTPUT_SLOT) return stack;
                 else {
-                    if (!simulate) {
-                        requiresUpdate = true;
-                    }
-                    return super.insertItem(slot, stack, false);
+                    if (!simulate) requiresUpdate = true;
+                    return super.insertItem(slot, stack, simulate);
                 }
             }
 
@@ -226,7 +225,6 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
             protected void onContentsChanged(int slot) {
                 currentRecipe = level == null ? null : UpgradeRecipeIngredients.fromItemstacks(level, getStackInSlot(0), getStackInSlot(1));
                 if (currentRecipe == null && progress > 0) progress = 0;
-                System.out.println(currentRecipe);
             }
         };
     }

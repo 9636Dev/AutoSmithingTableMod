@@ -25,7 +25,7 @@ public class Registries {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, AutoSmithingTableMod.MOD_ID);
 
     public static final RegistryObject<Block> AUTO_SMITHING_TABLE = BLOCKS.register("auto_smithing_table",
-            () -> new AutoSmithingTableBlock(BlockBehaviour.Properties.of(Material.METAL)));
+            () -> new AutoSmithingTableBlock(BlockBehaviour.Properties.of(Material.METAL).strength(1.5f)));
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, AutoSmithingTableMod.MOD_ID);
 
