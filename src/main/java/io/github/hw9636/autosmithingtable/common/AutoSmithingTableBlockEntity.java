@@ -1,5 +1,6 @@
 package io.github.hw9636.autosmithingtable.common;
 
+import io.github.hw9636.autosmithingtable.common.config.ASTConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -10,8 +11,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -25,14 +24,9 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
-
 public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergyStorage {
 
     public static final Logger logger = LogManager.getLogger();
-    public static final int ENERGY_PER_TICK = ASTConfig.COMMON.energyPerTick.get();
-    public static final int MAX_ENERGY_STORED = ASTConfig.COMMON.maxEnergyStored.get();
-    public static final int TICKS_PER_CRAFT = ASTConfig.COMMON.ticksPerCraft.get();
     public static final int INVENTORY_SLOTS = 3;
     public static final int INPUT_SLOT = 0;
     public static final int EXTRA_SLOT = 1;
@@ -45,29 +39,19 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
     private boolean requiresUpdate;
     private UpgradeRecipeIngredients currentRecipe;
 
-    private static Field base,addition;
     public AutoSmithingTableBlockEntity(BlockPos pos, BlockState blockstate) {
         super(Registries.AUTO_SMITHING_TABLE_ENTITY_TYPE.get(), pos, blockstate);
 
+
         this.inventory = createInventory(INVENTORY_SLOTS);
         this.inventoryLazy = LazyOptional.of(() -> this.inventory);
+        this.currentRecipe = null;
+
         this.requiresUpdate = false;
         this.data = getData();
 
         this.FEStored = 0;
         this.progress = 0;
-
-        if (base == null || addition == null) {
-            try {
-                base = UpgradeRecipe.class.getField("base");
-                addition = UpgradeRecipe.class.getField("addition");
-
-                base.setAccessible(true);
-                addition.setAccessible(true);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     private boolean matchRecipe(Ingredient base, Ingredient addition) {
@@ -76,24 +60,21 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
     public void serverTick() {
 
-        if (FEStored >= ENERGY_PER_TICK) {
-            assert level != null;
-            ItemStack result = level.getRecipeManager().getAllRecipesFor(RecipeType.SMITHING).stream()
-                    .filter((recipe) -> {
-                        try {
-                            return matchRecipe((Ingredient) base.get(recipe), (Ingredient) addition.get(recipe));
-                        } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }).findFirst().map(UpgradeRecipe::getResultItem).orElse(ItemStack.EMPTY);
+        if (this.currentRecipe != null) {
+            if (FEStored >= ASTConfig.COMMON.energyPerTick.get()) {
+                FEStored -= ASTConfig.COMMON.energyPerTick.get();
 
-            System.out.println(result);
+                if (++progress == ASTConfig.COMMON.ticksPerCraft.get()) {
+                    progress = 0;
 
-            if (!result.isEmpty() && insertItem(-2, result).isEmpty()) { // Hack for inserting
-                FEStored -= ENERGY_PER_TICK;
-                getItemInSlot(0).shrink(1);
-                getItemInSlot(1).shrink(1);
+                    if (insertItem(-2, currentRecipe.getResult()).isEmpty()) {
+                        getItemInSlot(0).shrink(1);
+                        getItemInSlot(1).shrink(1);
+                        currentRecipe = level == null ? null : UpgradeRecipeIngredients.fromItemstacks(level, getItemInSlot(0), getItemInSlot(1));
+                    }
+                }
             }
+            else if (progress > 0) progress--;
         }
 
         if (requiresUpdate) {
@@ -235,11 +216,17 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
                 if (slot == OUTPUT_SLOT) return stack;
                 else {
                     if (!simulate) {
-                        // TODO: 8/25/2022 Update Recipe
-                        AutoSmithingTableBlockEntity.this.update();
+                        requiresUpdate = true;
                     }
-                    return super.insertItem(slot, stack, simulate);
+                    return super.insertItem(slot, stack, false);
                 }
+            }
+
+            @Override
+            protected void onContentsChanged(int slot) {
+                currentRecipe = level == null ? null : UpgradeRecipeIngredients.fromItemstacks(level, getStackInSlot(0), getStackInSlot(1));
+                if (currentRecipe == null && progress > 0) progress = 0;
+                System.out.println(currentRecipe);
             }
         };
     }
@@ -248,10 +235,13 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        int received = Math.min(MAX_ENERGY_STORED - FEStored, maxReceive);
-        if (!simulate)
-            this.FEStored += received;
-        return maxReceive - received;
+        int toReceive = Math.min(ASTConfig.COMMON.maxEnergyStored.get() - FEStored, maxReceive);
+        if (!simulate) {
+            this.FEStored += toReceive;
+            this.requestModelDataUpdate();
+        }
+
+        return toReceive;
     }
 
     @Override
@@ -266,7 +256,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
     @Override
     public int getMaxEnergyStored() {
-        return MAX_ENERGY_STORED;
+        return ASTConfig.COMMON.maxEnergyStored.get();
     }
 
     @Override
@@ -276,6 +266,6 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
     @Override
     public boolean canReceive() {
-        return FEStored < MAX_ENERGY_STORED;
+        return FEStored < ASTConfig.COMMON.maxEnergyStored.get();
     }
 }

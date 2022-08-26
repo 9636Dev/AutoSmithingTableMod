@@ -2,7 +2,7 @@ package io.github.hw9636.autosmithingtable;
 
 import com.mojang.logging.LogUtils;
 import io.github.hw9636.autosmithingtable.client.AutoSmithingTableScreen;
-import io.github.hw9636.autosmithingtable.common.ASTConfig;
+import io.github.hw9636.autosmithingtable.common.config.ASTConfig;
 import io.github.hw9636.autosmithingtable.common.Registries;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.level.block.Blocks;

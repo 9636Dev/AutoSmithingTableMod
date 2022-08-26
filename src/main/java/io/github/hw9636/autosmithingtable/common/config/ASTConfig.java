@@ -1,4 +1,4 @@
-package io.github.hw9636.autosmithingtable.common;
+package io.github.hw9636.autosmithingtable.common.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
