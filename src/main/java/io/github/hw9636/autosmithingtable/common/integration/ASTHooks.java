@@ -18,6 +18,7 @@ public class ASTHooks {
     }
 
     public void enqueueIMC(final InterModEnqueueEvent event) {
-        InterModComms.sendTo("theoneprobe", "getTheOneProbe", AutoSmithingBlockInfoProvider::new);
+        if (TOPLoaded)
+            InterModComms.sendTo("theoneprobe", "getTheOneProbe", AutoSmithingBlockInfoProvider::new);
     }
 }
