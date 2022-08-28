@@ -59,7 +59,6 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
     public ItemStack quickMoveStack(Player player, int index) {
         ItemStack returnStack = ItemStack.EMPTY;
         final Slot slot = getSlot(index);
-        System.out.println(index);
         if (slot.hasItem()) {
             final ItemStack item = slot.getItem();
             returnStack = item.copy();
