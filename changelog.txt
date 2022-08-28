@@ -1,0 +1,9 @@
+Version 1.0.0
+
+- Added 'Auto Smithing Table'
+
+Version 1.1.0
+
+- Changed Item Capabilities on 'Auto Smithing Table' to be sided (top = slot 1, sides = slot 2, bottom = slot 3 (output))
+- Changed QuickMoveItemStack (Shift clicking will first insert into 2nd slot of container if possible)
+- Added 'TheOneProbe' Compatibility
