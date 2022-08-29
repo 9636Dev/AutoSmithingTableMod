@@ -3,6 +3,15 @@ buildscript {
         // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
         maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://maven.parchmentmc.org' }
+        maven {
+            name "Modmaven"
+            url "https://modmaven.dev/"
+            // For Gradle 5.1 and above, limit it to just AE2
+            content {
+                includeGroup 'appeng'
+            }
+        }
+
         mavenCentral()
     }
     dependencies {
@@ -146,6 +155,9 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 
     implementation fg.deobf("curse.maven:the-one-probe-245211:${top_version}")
+
+//    compileOnly "appeng:appliedenergistics2:11.1.6:api"
+    runtimeOnly fg.deobf("appeng:appliedenergistics2:11.1.6")
 
     runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
 

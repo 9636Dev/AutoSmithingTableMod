@@ -30,7 +30,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
     private final LazyOptional<ItemStackHandler> outputSlotsLazy;
     private int FEStored;
     private int progress;
-    private boolean requiresUpdate, canInsertOutput;
+    private boolean requiresUpdate, canInsertOutput, checkRecipe;
     private UpgradeRecipe currentRecipe;
 
     public AutoSmithingTableBlockEntity(BlockPos pos, BlockState blockstate) {
@@ -49,6 +49,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
         this.requiresUpdate = false;
         this.canInsertOutput = false;
+        this.checkRecipe = false;
         this.data = getData();
 
         this.FEStored = 0;
@@ -61,6 +62,13 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
     public void serverTick() {
         if (level == null || level.isClientSide) return; // Only server-side ticks
+
+        if (this.checkRecipe) {
+            currentRecipe =  UpgradeRecipeHelper.fromItemStacks(level,
+                    AutoSmithingTableBlockEntity.this.getItemInSlot(baseSlotsLazy, 0),
+                    AutoSmithingTableBlockEntity.this.getItemInSlot(additionSlotsLazy, 0));
+            this.checkRecipe = false;
+        }
 
         if (this.currentRecipe != null && canInsert(getItemInSlot(outputSlotsLazy,0), this.currentRecipe.getResultItem())) {
             if (FEStored >= ASTConfig.COMMON.energyPerTick.get()) {
@@ -157,6 +165,8 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
         this.baseSlots.deserializeNBT(tag.getCompound("InventoryBase"));
         this.additionSlots.deserializeNBT(tag.getCompound("InventoryAddition"));
         this.outputSlots.deserializeNBT(tag.getCompound("InventoryOutput"));
+
+        this.checkRecipe = true; // Check recipe on next tick
     }
 
     // Util

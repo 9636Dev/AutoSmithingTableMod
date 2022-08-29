@@ -8,7 +8,7 @@ public class UpgradeRecipeHelper {
     public static UpgradeRecipe fromItemStacks(Level level, final ItemStack input1, final ItemStack input2) {
 
         return level.getRecipeManager().getAllRecipesFor(RecipeType.SMITHING).stream()
-                .filter((upgradeRecipe -> upgradeRecipe.getIngredients().get(0).test(input1) && upgradeRecipe.isAdditionIngredient(input2))).findFirst().orElse(null);
+                .filter((upgradeRecipe -> ((SmithingRecipeHelper)(upgradeRecipe)).getBase().test(input1) && upgradeRecipe.isAdditionIngredient(input2))).findFirst().orElse(null);
     }
 
 }
