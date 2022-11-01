@@ -9,6 +9,7 @@ buildscript {
             // For Gradle 5.1 and above, limit it to just AE2
             content {
                 includeGroup 'appeng'
+                includeGroup 'mekanism'
             }
         }
 
@@ -21,13 +22,11 @@ buildscript {
         classpath 'org.spongepowered:mixingradle:0.7.+'
     }
 }
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-plugins {
-    id 'eclipse'
-    id 'maven-publish'
-}
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
 version = '1.0'
@@ -39,12 +38,10 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'parchment', version: '2022.08.21-1.18.2'
+    mappings channel: 'official', version: "1.19.2"
 
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
             workingDirectory project.file('run')
@@ -77,25 +74,13 @@ minecraft {
             }
         }
 
-        // This run config launches GameTestServer and runs all registered gametests, then exits.
-        // By default, the server will crash when no gametests are provided.
-        // The gametest system is also enabled by default for other run configs under the /test command.
         gameTestServer {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-            // The markers can be added/remove as needed separated by commas.
-            // "SCAN": For mods scan.
-            // "REGISTRIES": For firing of registry events.
-            // "REGISTRYDUMP": For getting the contents of all registries.
             property 'forge.logging.markers', 'REGISTRIES'
 
-            // Recommended logging level for the console
-            // You can set various levels here.
-            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
 
-            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', 'autosmithingtable'
 
             mods {
@@ -128,40 +113,36 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven {
-        // location of the maven that hosts JEI files
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
+    maven { // JEI
+        url "https://dvs1.progwml6.com/files/maven"
     }
-    maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name = "ModMaven"
-        url = "https://modmaven.dev"
-    }
-
     maven { // TOP
-        url "https://cursemaven.com"
+        url "https://maven.k-4u.nl"
     }
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.0'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.1.47'
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    // compile against the JEI API but do not include it at runtime
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
-    // at runtime, use the full JEI jar
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+    // JEI
+    compileOnly(fg.deobf("mezz.jei:jei-1.19.2-common-api:${jei_version}"))
+    compileOnly(fg.deobf("mezz.jei:jei-1.19.2-forge-api:${jei_version}"))
+    runtimeOnly(fg.deobf("mezz.jei:jei-1.19.2-forge:${jei_version}"))
 
-    implementation fg.deobf("curse.maven:the-one-probe-245211:${top_version}")
+    // TOP
+    compileOnly fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}:api") {
+        transitive = false
+    }
+    implementation fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}") {
+        transitive = false
+    }
 
-//    compileOnly "appeng:appliedenergistics2:11.1.6:api"
-    runtimeOnly fg.deobf("appeng:appliedenergistics2:11.1.6")
-
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
 
 }
+
+
 
 mixin {
     add sourceSets.main, 'mixins.autosmithingmod.refmap.json'

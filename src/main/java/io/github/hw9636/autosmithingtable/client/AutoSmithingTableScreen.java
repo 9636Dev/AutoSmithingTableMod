@@ -7,7 +7,6 @@ import io.github.hw9636.autosmithingtable.common.AutoSmithingContainer;
 import io.github.hw9636.autosmithingtable.common.config.ASTConfig;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -39,7 +38,7 @@ public class AutoSmithingTableScreen extends AbstractContainerScreen<AutoSmithin
         int j = this.getGuiTop();
 
         if (isIn(mx, my, i + 164,j + 8, i + 168, j + 79)) {
-            renderComponentTooltip(stack, List.of(new TextComponent(this.menu.data.get(0) + "/" + ASTConfig.COMMON.maxEnergyStored.get())), mx, my);
+            renderComponentTooltip(stack, List.of(Component.literal(this.menu.data.get(0) + "/" + ASTConfig.COMMON.maxEnergyStored.get())), mx, my);
         }
     }
 

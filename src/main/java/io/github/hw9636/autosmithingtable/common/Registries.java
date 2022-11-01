@@ -32,12 +32,12 @@ public class Registries {
     public static final RegistryObject<Item> AUTO_SMITHING_TABLE_ITEM = ITEMS.register("auto_smithing_table",
             () -> new BlockItem(AUTO_SMITHING_TABLE.get(), new Item.Properties().tab(TAB)));
 
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, AutoSmithingTableMod.MOD_ID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, AutoSmithingTableMod.MOD_ID);
 
     public static final RegistryObject<BlockEntityType<AutoSmithingTableBlockEntity>> AUTO_SMITHING_TABLE_ENTITY_TYPE = BLOCK_ENTITIES.register("auto_smithing_table",
             () -> BlockEntityType.Builder.of(AutoSmithingTableBlockEntity::new, AUTO_SMITHING_TABLE.get()).build(null));
 
-    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, AutoSmithingTableMod.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, AutoSmithingTableMod.MOD_ID);
 
     public static final RegistryObject<MenuType<AutoSmithingContainer>> AUTO_SMITHING_CONTAINER = CONTAINERS.register("auto_smithing_table",
             () -> new MenuType<>(AutoSmithingContainer::new));
