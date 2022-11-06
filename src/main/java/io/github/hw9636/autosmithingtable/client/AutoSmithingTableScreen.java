@@ -10,10 +10,25 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class AutoSmithingTableScreen extends AbstractContainerScreen<AutoSmithingContainer> {
+    private static final int PROGRESS_BAR_ONS_LEFT = 100;
+    private static final int PROGRESS_BAR_ONS_TOP = 46;
+    private static final int PROGRESS_BAR_OFS_LEFT = 177;
+    private static final int PROGRESS_BAR_OFS_TOP = 1;
+    private static final int ENERGY_BAR_ONS_LEFT = 164;
+    private static final int ENERGY_BAR_ONS_TOP = 8;
+    private static final int ENERGY_BAR_OFS_LEFT = 177;
+    private static final int ENERGY_BAR_OFS_TOP = 22;
+
+    public static final int PROGRESS_BAR_WIDTH = 27;
+    public static final int PROGRESS_BAR_HEIGHT = 20;
+    private static final int ENERGY_BAR_WIDTH = 4;
+    private static final int ENERGY_BAR_HEIGHT = 71;
+
     private static final ResourceLocation TEXTURE = new ResourceLocation(AutoSmithingTableMod.MOD_ID, "textures/gui/auto_smithing_table.png");
 
     public AutoSmithingTableScreen(AutoSmithingContainer pMenu, Inventory pPlayerInventory, Component pTitle) {
@@ -21,6 +36,7 @@ public class AutoSmithingTableScreen extends AbstractContainerScreen<AutoSmithin
     }
 
     private int mapNum(int toMap, int maxToMap, int maxMapped) {
+        if (toMap < 0 || toMap > maxToMap) throw new IllegalArgumentException("Argument 'toMap' is too big or too small to map");
         if (maxToMap == 0) return maxMapped;
         return (int)(toMap / (double)maxToMap * maxMapped + 0.5);
     }
@@ -30,21 +46,24 @@ public class AutoSmithingTableScreen extends AbstractContainerScreen<AutoSmithin
     }
 
     @Override
-    public void render(PoseStack stack, int mx, int my, float pPartialTick) {
+    public void render(@NotNull PoseStack stack, int mx, int my, float pPartialTick) {
         super.render(stack, mx, my, pPartialTick);
 
-        this.renderTooltip(stack, mx, my);
 
         int i = this.getGuiLeft();
         int j = this.getGuiTop();
 
-        if (isIn(mx, my, i + 164,j + 8, i + 168, j + 79)) {
-            renderComponentTooltip(stack, List.of(new TextComponent(this.menu.data.get(0) + "/" + ASTConfig.COMMON.maxEnergyStored.get())), mx, my);
+        this.renderTooltip(stack, mx, my);
+
+        if (isIn(mx, my, i + ENERGY_BAR_ONS_LEFT,j + ENERGY_BAR_ONS_TOP,
+                i + ENERGY_BAR_ONS_LEFT + ENERGY_BAR_WIDTH, j + ENERGY_BAR_ONS_TOP + ENERGY_BAR_HEIGHT)) {
+            renderComponentTooltip(stack, List.of(new TextComponent((this.menu.data.get(0) << 16 | this.menu.data.get(1)) + "/" + ASTConfig.COMMON.maxEnergyStored.get())), mx, my);
         }
     }
 
+
     @Override
-    protected void renderBg(PoseStack stack, float pPartialTick, int pMouseX, int pMouseY) {
+    protected void renderBg(@NotNull PoseStack stack, float pPartialTick, int pMouseX, int pMouseY) {
         renderBackground(stack);
 
         int i = this.getGuiLeft();
@@ -54,9 +73,12 @@ public class AutoSmithingTableScreen extends AbstractContainerScreen<AutoSmithin
         RenderSystem.setShaderTexture(0, TEXTURE);
         this.blit(stack, i, j, 0, 0, this.imageWidth, this.imageHeight);
 
-        this.blit(stack, i + 100, j + 46, 177,1,mapNum(menu.data.get(1),ASTConfig.COMMON.ticksPerCraft.get(),27),20);
+        this.blit(stack, i + PROGRESS_BAR_ONS_LEFT, j + PROGRESS_BAR_ONS_TOP, PROGRESS_BAR_OFS_LEFT,
+                PROGRESS_BAR_OFS_TOP, mapNum(menu.data.get(2) ,ASTConfig.COMMON.ticksPerCraft.get(),
+                        PROGRESS_BAR_WIDTH),PROGRESS_BAR_HEIGHT);
 
-        int mappedY = mapNum(menu.data.get(0), ASTConfig.COMMON.maxEnergyStored.get(), 79 - 8);
-        this.blit(stack, i + 164, j + 8 + 71 - mappedY, 177, 22 + 71 - mappedY, 4, mappedY);
+        int mappedY = mapNum((menu.data.get(0) << 16) | menu.data.get(1), ASTConfig.COMMON.maxEnergyStored.get(), ENERGY_BAR_HEIGHT);
+        this.blit(stack, i + ENERGY_BAR_ONS_LEFT, j + ENERGY_BAR_ONS_TOP + ENERGY_BAR_HEIGHT - mappedY,
+                ENERGY_BAR_OFS_LEFT, ENERGY_BAR_OFS_TOP + ENERGY_BAR_HEIGHT - mappedY, ENERGY_BAR_WIDTH, mappedY);
     }
 }

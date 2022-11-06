@@ -26,7 +26,7 @@ public class AutoSmithingBlockInfoProvider implements IProbeInfoProvider, Functi
         {
             ProgressStyle progressStyle = new ProgressStyle();
             progressStyle.showText(false);
-            iProbeInfo.progress(be.data.get(1), ASTConfig.COMMON.ticksPerCraft.get(), progressStyle);
+            iProbeInfo.progress(be.data.get(2), ASTConfig.COMMON.ticksPerCraft.get(), progressStyle);
         }
 
     }

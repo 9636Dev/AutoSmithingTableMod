@@ -1,10 +1,9 @@
 package io.github.hw9636.autosmithingtable;
 
-import com.mojang.logging.LogUtils;
 import io.github.hw9636.autosmithingtable.client.AutoSmithingTableScreen;
 import io.github.hw9636.autosmithingtable.common.Registries;
 import io.github.hw9636.autosmithingtable.common.config.ASTConfig;
-import io.github.hw9636.autosmithingtable.common.integration.ASTHooks;
+import io.github.hw9636.autosmithingtable.common.integration.AutoSmithingTableHooks;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -14,7 +13,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(AutoSmithingTableMod.MOD_ID)
@@ -22,11 +20,11 @@ public class AutoSmithingTableMod
 {
     public static final String MOD_ID = "autosmithingtable";
 
-    private final ASTHooks hooks;
+    private final AutoSmithingTableHooks hooks;
 
     public AutoSmithingTableMod()
     {
-        this.hooks = new ASTHooks();
+        this.hooks = new AutoSmithingTableHooks();
 
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);

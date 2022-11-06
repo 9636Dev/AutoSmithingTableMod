@@ -10,6 +10,7 @@ import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -27,12 +28,12 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
     public static final int ADDITION_SLOTS_START = 37;
     public static final int ADDITION_SLOTS_END = 37;
 
-    private final ContainerLevelAccess containerAccess;
+    public final ContainerLevelAccess containerAccess;
     public final ContainerData data;
 
     public AutoSmithingContainer(int id, Inventory playerInv) {
-        this(id, playerInv, BlockPos.ZERO, new SimpleContainerData(3), new ItemStackHandler(1),
-        new ItemStackHandler(1),new ItemStackHandler(1));
+        this(id, playerInv, BlockPos.ZERO, new SimpleContainerData(4), new ItemStackHandler(1),
+                new ItemStackHandler(1),new ItemStackHandler(1));
     }
 
     public AutoSmithingContainer(int id, Inventory playerInv, BlockPos pos, ContainerData data, IItemHandler baseSlots,
@@ -57,7 +58,7 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
         this.addSlot(new SlotItemHandler(baseSlots, 0, 27, 47));
         this.addSlot(new SlotItemHandler(additionSlots,  0, 76, 47));
         this.addSlot(new SlotItemHandler(outputSlots,  0, 134, 47) {
-            public boolean mayPlace(ItemStack p_39818_) {
+            public boolean mayPlace(@NotNull ItemStack p_39818_) {
                 return false;
             }
         });
@@ -65,30 +66,31 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return stillValid(this.containerAccess, player, Registries.AUTO_SMITHING_TABLE.get());
     }
 
     public static MenuConstructor getServerContainer(AutoSmithingTableBlockEntity entity, BlockPos pos) {
         return (id, playerInv, player) -> new AutoSmithingContainer(id, playerInv, pos,
-                new AutoSmithingContainerData(entity, 3), entity.baseSlots, entity.additionSlots,
+                new AutoSmithingContainerData(entity, 4), entity.baseSlots, entity.additionSlots,
                 entity.outputSlots);
     }
 
-    private boolean moveItemToContainer(ItemStack item) {
+    private void moveItemToContainer(ItemStack item) {
         Optional<Optional<UpgradeRecipe>> optionalOptionalRecipe = this.containerAccess.evaluate((level, pos) -> level.getRecipeManager().getAllRecipesFor(RecipeType.SMITHING).stream()
-                    .filter((ur) -> ur.isAdditionIngredient(item)).findFirst());
+                .filter((ur) -> ur.isAdditionIngredient(item)).findFirst());
         if (optionalOptionalRecipe.isPresent()) {
             Optional<UpgradeRecipe> recipeOptional = optionalOptionalRecipe.get();
             if (recipeOptional.isPresent()) {
-                return moveItemStackTo(item, ADDITION_SLOTS_START, ADDITION_SLOTS_END + 1, false);
+                moveItemStackTo(item, ADDITION_SLOTS_START, ADDITION_SLOTS_END + 1, false);
+                return;
             }
         }
-        return moveItemStackTo(item, BASE_SLOTS_START, BASE_SLOTS_END + 1, false);
+        moveItemStackTo(item, BASE_SLOTS_START, BASE_SLOTS_END + 1, false);
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
         ItemStack returnStack = ItemStack.EMPTY;
 
         final Slot slot = getSlot(index);
@@ -111,7 +113,7 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
             }
             else { // From Container
                 if (!moveItemStackTo(item, INVENTORY_SLOTS_START, HOTBAR_SLOTS_END + 1, true))
-                        return ItemStack.EMPTY;
+                    return ItemStack.EMPTY;
             }
 
             if (item.isEmpty()) {

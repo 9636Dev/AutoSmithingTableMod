@@ -25,14 +25,14 @@ public class ASTConfig {
 
             this.energyPerTick = builder.comment("Energy per tick of crafting, range 1 - 8192, default 40")
                     .defineInRange("energyPerTick", defaultEnergyPerTick, 1, 8192);
+
         }
     }
 
     public static final Common COMMON;
     public static final ForgeConfigSpec COMMON_SPEC;
 
-    static //constructor
-    {
+    static {
         Pair<Common, ForgeConfigSpec> commonSpecPair = new ForgeConfigSpec.Builder().configure(Common::new);
         COMMON = commonSpecPair.getLeft();
         COMMON_SPEC = commonSpecPair.getRight();
