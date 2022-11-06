@@ -10,8 +10,10 @@ import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.zip.ZipEntry;
 
 public class AutoSmithingContainer extends AbstractContainerMenu {
 
@@ -27,11 +29,11 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
     public static final int ADDITION_SLOTS_START = 37;
     public static final int ADDITION_SLOTS_END = 37;
 
-    private final ContainerLevelAccess containerAccess;
+    public final ContainerLevelAccess containerAccess;
     public final ContainerData data;
 
     public AutoSmithingContainer(int id, Inventory playerInv) {
-        this(id, playerInv, BlockPos.ZERO, new SimpleContainerData(3), new ItemStackHandler(1),
+        this(id, playerInv, BlockPos.ZERO, new SimpleContainerData(5), new ItemStackHandler(1),
         new ItemStackHandler(1),new ItemStackHandler(1));
     }
 
@@ -57,7 +59,7 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
         this.addSlot(new SlotItemHandler(baseSlots, 0, 27, 47));
         this.addSlot(new SlotItemHandler(additionSlots,  0, 76, 47));
         this.addSlot(new SlotItemHandler(outputSlots,  0, 134, 47) {
-            public boolean mayPlace(ItemStack p_39818_) {
+            public boolean mayPlace(@NotNull ItemStack p_39818_) {
                 return false;
             }
         });
@@ -65,13 +67,13 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return stillValid(this.containerAccess, player, Registries.AUTO_SMITHING_TABLE.get());
     }
 
     public static MenuConstructor getServerContainer(AutoSmithingTableBlockEntity entity, BlockPos pos) {
         return (id, playerInv, player) -> new AutoSmithingContainer(id, playerInv, pos,
-                new AutoSmithingContainerData(entity, 3), entity.baseSlots, entity.additionSlots,
+                new AutoSmithingContainerData(entity, 5), entity.baseSlots, entity.additionSlots,
                 entity.outputSlots);
     }
 
@@ -88,7 +90,7 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
         ItemStack returnStack = ItemStack.EMPTY;
 
         final Slot slot = getSlot(index);

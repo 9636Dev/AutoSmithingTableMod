@@ -8,21 +8,30 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Containers;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergyStorage {
+
+    public static final int SIDE_NONE = 0;
+    public static final int SIDE_INPUT1 = 1;
+    public static final int SIDE_INPUT2 = 2;
+    public static final int SIDE_OUTPUT = 3;
+
     public final ItemStackHandler baseSlots, additionSlots, outputSlots;
     public final ContainerData data;
     private final LazyOptional<ItemStackHandler> baseSlotsLazy;
@@ -32,6 +41,9 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
     private int progress;
     private boolean requiresUpdate, canInsertOutput, checkRecipe;
     private UpgradeRecipe currentRecipe;
+    private int sidesConfig;
+
+    private final int directionInt;
 
     public AutoSmithingTableBlockEntity(BlockPos pos, BlockState blockstate) {
         super(Registries.AUTO_SMITHING_TABLE_ENTITY_TYPE.get(), pos, blockstate);
@@ -54,6 +66,39 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
         this.FEStored = 0;
         this.progress = 0;
+
+        this.sidesConfig = getDefaultSidesConfig();
+        this.directionInt = this.getBlockState().getValue(AutoSmithingTableBlock.FACING).get2DDataValue();
+    }
+
+    private int getDefaultSidesConfig() {
+        return (SIDE_INPUT1 << 10) | (SIDE_OUTPUT << 8) | (SIDE_INPUT2 << 6) | (SIDE_INPUT2 << 4) | (SIDE_INPUT2 << 2) | SIDE_INPUT2;
+    }
+
+    public static int getSide(int sidesConfig, Direction side) {
+        return switch (side) {
+            case UP -> (sidesConfig >> 10) & 3;
+            case DOWN ->  (sidesConfig >> 8) & 3;
+            case NORTH ->  (sidesConfig >> 6) & 3;
+            case EAST -> (sidesConfig >> 4) & 3;
+            case SOUTH -> (sidesConfig >> 2) & 3;
+            case WEST -> sidesConfig & 3; // 3 = 111 (binary)
+        };
+    }
+
+    private int getSide(Direction side) {
+        return AutoSmithingTableBlockEntity.getSide(this.sidesConfig, side);
+    }
+
+    public static int setSide(Direction dir, int value, int sidesConfig) {
+        return switch (dir) {
+            case UP -> (sidesConfig & 0x3FF) | (value << 10); // 2 ^ 10
+            case DOWN -> (sidesConfig & 0xCFF) | (value << 8); // 2 ^ 8
+            case NORTH -> (sidesConfig & 0xF3F) | (value << 6); // 2 ^ 6
+            case EAST -> (sidesConfig & 0xFCF) | (value << 4); // 2 ^ 4
+            case SOUTH -> (sidesConfig & 0xFF3) | (value << 2);
+            case WEST -> (sidesConfig & 0xFFC) | value;
+        };
     }
 
     private boolean canInsert(ItemStack beforeInsert, ItemStack toInsert) {
@@ -64,9 +109,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
         if (level == null || level.isClientSide) return; // Only server-side ticks
 
         if (this.checkRecipe) {
-            currentRecipe =  UpgradeRecipeHelper.fromItemStacks(level,
-                    AutoSmithingTableBlockEntity.this.getItemInSlot(baseSlotsLazy, 0),
-                    AutoSmithingTableBlockEntity.this.getItemInSlot(additionSlotsLazy, 0));
+            currentRecipe = getRecipeFromStacks(getItemInSlot(baseSlotsLazy,0), getItemInSlot(additionSlotsLazy,0));
             this.checkRecipe = false;
         }
 
@@ -80,7 +123,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
                     if (insertItem(outputSlotsLazy,0, currentRecipe.getResultItem().copy()).isEmpty()) {
                         getItemInSlot(baseSlotsLazy,0).shrink(1);
                         getItemInSlot(additionSlotsLazy,0).shrink(1);
-                        currentRecipe = UpgradeRecipeHelper.fromItemStacks(level, getItemInSlot(baseSlotsLazy,0), getItemInSlot(additionSlotsLazy,0));
+                        currentRecipe = getRecipeFromStacks(getItemInSlot(baseSlotsLazy,0), getItemInSlot(additionSlotsLazy,0));
                     }
                 }
             }
@@ -93,21 +136,33 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
         }
     }
 
+    private UpgradeRecipe getRecipeFromStacks(ItemStack input1, ItemStack input2) {
+        return level == null ? null : level.getRecipeManager().getRecipeFor(RecipeType.SMITHING,
+                new SimpleContainer(input1, input2), level).orElse(null);
+    }
+
     // Capabilities
+    
 
 
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction dir) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && dir != null) {
-            return switch (dir) {
-                case DOWN -> this.outputSlotsLazy.cast();
-                case UP -> this.baseSlotsLazy.cast();
+        if (dir == null) return LazyOptional.empty();
 
-                case NORTH, EAST, WEST, SOUTH -> this.additionSlotsLazy.cast();
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+            /*if (dir == Direction.UP) return this.baseSlotsLazy.cast();
+            if (dir == Direction.SOUTH || dir == Direction.NORTH || dir == Direction.EAST || dir == Direction.WEST) return this.additionSlotsLazy.cast();
+            if (dir == Direction.DOWN) return this.outputSlotsLazy.cast(); */
+
+            return switch (this.getSide(dir)) {
+                case SIDE_INPUT1 -> this.baseSlotsLazy.cast();
+                case SIDE_INPUT2 -> this.additionSlotsLazy.cast();
+                case SIDE_OUTPUT -> this.outputSlotsLazy.cast();
+                default -> LazyOptional.empty();
             };
         }
-        if (cap == CapabilityEnergy.ENERGY) return LazyOptional.of(() -> this).cast();
+        if (cap == ForgeCapabilities.ENERGY) return LazyOptional.of(() -> this).cast();
 
         return super.getCapability(cap, dir);
     }
@@ -122,13 +177,14 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
     // Data Sync
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
 
         tag.put("InventoryBase", baseSlots.serializeNBT());
         tag.put("InventoryAddition", additionSlots.serializeNBT());
         tag.put("InventoryOutput", outputSlots.serializeNBT());
 
+        tag.putInt("Sides", sidesConfig);
         tag.putInt("FEStored", FEStored);
         tag.putInt("Progress", progress);
     }
@@ -140,7 +196,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag() {
         return serializeNBT();
     }
 
@@ -156,7 +212,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
     }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(@NotNull CompoundTag tag) {
         super.load(tag);
 
         this.FEStored = tag.getInt("FEStored");
@@ -166,10 +222,20 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
         this.additionSlots.deserializeNBT(tag.getCompound("InventoryAddition"));
         this.outputSlots.deserializeNBT(tag.getCompound("InventoryOutput"));
 
+        this.sidesConfig = tag.getInt("Sides");
+
         this.checkRecipe = true; // Check recipe on next tick
     }
 
     // Util
+
+    public void dropItems(double pX, double pY, double pZ) {
+        if (level != null) {
+            Containers.dropItemStack(level, pX, pY, pZ, this.getItemInSlot(baseSlotsLazy, 0));
+            Containers.dropItemStack(level, pX, pY, pZ, this.getItemInSlot(additionSlotsLazy, 0));
+            Containers.dropItemStack(level, pX, pY, pZ, this.getItemInSlot(outputSlotsLazy, 0));
+        }
+    }
 
     public void update() {
         requestModelDataUpdate();
@@ -184,8 +250,11 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
             @Override
             public int get(int index) {
                 return switch (index) {
-                    case 0 -> FEStored;
-                    case 1 -> progress;
+                    case 0 -> FEStored >> 16;
+                    case 1 -> FEStored & 0xffff;
+                    case 2 -> progress;
+                    case 3 -> directionInt;
+                    case 4 -> sidesConfig;
                     default -> 0;
                 };
             }
@@ -193,31 +262,22 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
             @Override
             public void set(int index, int value) {
                 switch (index) {
-                    case 0 -> FEStored = value;
-                    case 1 -> progress = value;
+                    case 2 -> progress = value;
+                    case 4 -> sidesConfig = value;
                 }
             }
 
             @Override
             public int getCount() {
-                return 2;
+                return 5;
             }
         };
     }
 
     // Inventory Stuff
-    public void setItemInSlot(LazyOptional<ItemStackHandler> slotsLazy, int slot, ItemStack item) {
-        slotsLazy.ifPresent(inv -> inv.setStackInSlot(slot, item));
-    }
 
     public ItemStack getItemInSlot(LazyOptional<ItemStackHandler> slotsLazy, int slot) {
         return slotsLazy.map(inv -> inv.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
-    }
-
-    public ItemStack extractItem(LazyOptional<ItemStackHandler> slotsLazy, int slot) {
-        final int count = getItemInSlot(slotsLazy, slot).getCount();
-        this.requiresUpdate = true;
-        return slotsLazy.map(inv -> inv.extractItem(slot, count, false)).orElse(ItemStack.EMPTY);
     }
 
     public ItemStack insertItem(LazyOptional<ItemStackHandler> slotsLazy, int slot, ItemStack stack) {
@@ -274,9 +334,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
             @Override
             protected void onContentsChanged(int slot) {
-                currentRecipe = level == null ? null : UpgradeRecipeHelper.fromItemStacks(level,
-                        AutoSmithingTableBlockEntity.this.getItemInSlot(baseSlotsLazy, 0),
-                        AutoSmithingTableBlockEntity.this.getItemInSlot(additionSlotsLazy, 0));
+                currentRecipe = level == null ? null :getRecipeFromStacks(getItemInSlot(baseSlotsLazy,0), getItemInSlot(additionSlotsLazy,0));
                 if (currentRecipe == null && progress > 0) progress = 0;
             }
         };

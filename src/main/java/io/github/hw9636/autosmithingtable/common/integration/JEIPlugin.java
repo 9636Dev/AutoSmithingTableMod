@@ -15,7 +15,7 @@ public class JEIPlugin implements IModPlugin {
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
-        return new ResourceLocation(AutoSmithingTableMod.MOD_ID, "jei_plugin");
+        return new ResourceLocation(AutoSmithingTableMod.MOD_ID, "jei");
 
     }
 

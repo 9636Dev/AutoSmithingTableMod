@@ -17,7 +17,7 @@ public class AutoSmithingBlockInfoProvider implements IProbeInfoProvider, Functi
 
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(AutoSmithingTableMod.MOD_ID,"topprovider");
+        return new ResourceLocation(AutoSmithingTableMod.MOD_ID, "topprovider");
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 public class ASTConfig {
     public static class Common
     {
-        private static final int defaultMaxEnergyStored = 100_000;
+        private static final int defaultMaxEnergyStored = 100000;
         private static final int defaultTicksPerCraft = 20;
         private static final int defaultEnergyPerTick = 40;
 
@@ -15,10 +15,12 @@ public class ASTConfig {
         public final ForgeConfigSpec.ConfigValue<Integer> energyPerTick;
 
 
+
         public Common(ForgeConfigSpec.Builder builder)
         {
-            this.maxEnergyStored = builder.comment("Max Energy Stored, range 100 - 100,000,000, default 100,000")
-                    .defineInRange("maxEnergyStored", defaultMaxEnergyStored, 100,100_000_000);
+
+            this.maxEnergyStored = builder.comment("Max Energy Stored, range 100 - 1000000, default 100000")
+                    .defineInRange("maxEnergyStored", defaultMaxEnergyStored, 100,1000000);
 
             this.ticksPerCraft = builder.comment("Ticks per craft in ticks, range 1 - 2048, default 20")
                     .defineInRange("ticksPerCraft", defaultTicksPerCraft, 1, 2048);

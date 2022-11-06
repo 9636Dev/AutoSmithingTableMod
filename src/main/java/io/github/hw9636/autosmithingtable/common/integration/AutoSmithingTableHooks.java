@@ -6,10 +6,10 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 
 @SuppressWarnings("unused")
-public class ASTHooks {
+public class AutoSmithingTableHooks {
     public boolean TOPLoaded;
 
-    public ASTHooks() {
+    public AutoSmithingTableHooks() {
         TOPLoaded = false;
     }
 
