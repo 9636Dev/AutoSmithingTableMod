@@ -1,9 +1,9 @@
 {
-  "block.autosmithingtable.auto_smithing_table": "Auto Smithing Table",
-  "item.autosmithingtable.auto_smithing_table": "Auto Smithing Table",
+  "block.autosmithingtable.auto_smithing_table": "Smithing Table (Auto)",
+  "item.autosmithingtable.auto_smithing_table": "Smithing Table (Auto)",
 
   "container.autosmithingtable.title": "Upgrade Items (Auto)",
-  "itemGroup.autosmithingtable": "AutoSmithingTable",
+  "itemGroup.autosmithingtable": "Auto Smithing Table",
 
   "message.autosmithingtable.change_side_to_0": "[§eAutoSmithingTable§r] §bSide changed to: Nothing",
   "message.autosmithingtable.change_side_to_1": "[§eAutoSmithingTable§r] §bSide changed to: Input Base",
