@@ -107,7 +107,9 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
                 if (++progress == ASTConfig.COMMON.ticksPerCraft.get()) {
                     progress = 0;
 
-                    if (insertItem(outputSlotsLazy,0, currentRecipe.getResultItem().copy()).isEmpty()) {
+                    ItemStack result = currentRecipe.getResultItem().copy();
+                    result.setDamageValue(getItemInSlot(baseSlotsLazy, 0).getDamageValue());
+                    if (insertItem(outputSlotsLazy,0, result).isEmpty()) {
                         getItemInSlot(baseSlotsLazy,0).shrink(1);
                         getItemInSlot(additionSlotsLazy,0).shrink(1);
                         currentRecipe = getRecipeFromStacks(getItemInSlot(baseSlotsLazy,0), getItemInSlot(additionSlotsLazy,0));
