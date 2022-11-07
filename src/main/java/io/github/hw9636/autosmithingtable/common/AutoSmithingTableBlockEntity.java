@@ -1,6 +1,6 @@
 package io.github.hw9636.autosmithingtable.common;
 
-import io.github.hw9636.autosmithingtable.common.config.ASTConfig;
+import io.github.hw9636.autosmithingtable.common.config.AutoSmithingTableConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -8,7 +8,6 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.ContainerData;
@@ -17,16 +16,17 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.*;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergyStorage {
 
+    @SuppressWarnings("unused")
     public static final int SIDE_NONE = 0;
     public static final int SIDE_INPUT1 = 1;
     public static final int SIDE_INPUT2 = 2;
@@ -42,8 +42,6 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
     private boolean requiresUpdate, canInsertOutput, checkRecipe;
     private UpgradeRecipe currentRecipe;
     private int sidesConfig;
-
-    private final int directionInt;
 
     public AutoSmithingTableBlockEntity(BlockPos pos, BlockState blockstate) {
         super(Registries.AUTO_SMITHING_TABLE_ENTITY_TYPE.get(), pos, blockstate);
@@ -68,7 +66,6 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
         this.progress = 0;
 
         this.sidesConfig = getDefaultSidesConfig();
-        this.directionInt = this.getBlockState().getValue(AutoSmithingTableBlock.FACING).get2DDataValue();
     }
 
     private int getDefaultSidesConfig() {
@@ -114,10 +111,10 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
         }
 
         if (this.currentRecipe != null && canInsert(getItemInSlot(outputSlotsLazy,0), this.currentRecipe.getResultItem())) {
-            if (FEStored >= ASTConfig.COMMON.energyPerTick.get()) {
-                FEStored -= ASTConfig.COMMON.energyPerTick.get();
+            if (FEStored >= AutoSmithingTableConfig.COMMON.energyPerTick.get()) {
+                FEStored -= AutoSmithingTableConfig.COMMON.energyPerTick.get();
 
-                if (++progress == ASTConfig.COMMON.ticksPerCraft.get()) {
+                if (++progress == AutoSmithingTableConfig.COMMON.ticksPerCraft.get()) {
                     progress = 0;
 
                     if (insertItem(outputSlotsLazy,0, currentRecipe.getResultItem().copy()).isEmpty()) {
@@ -253,8 +250,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
                     case 0 -> FEStored >> 16;
                     case 1 -> FEStored & 0xffff;
                     case 2 -> progress;
-                    case 3 -> directionInt;
-                    case 4 -> sidesConfig;
+                    case 3 -> sidesConfig;
                     default -> 0;
                 };
             }
@@ -263,13 +259,13 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
             public void set(int index, int value) {
                 switch (index) {
                     case 2 -> progress = value;
-                    case 4 -> sidesConfig = value;
+                    case 3 -> sidesConfig = value;
                 }
             }
 
             @Override
             public int getCount() {
-                return 5;
+                return 4;
             }
         };
     }
@@ -344,7 +340,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        int toReceive = Math.min(ASTConfig.COMMON.maxEnergyStored.get() - FEStored, maxReceive);
+        int toReceive = Math.min(AutoSmithingTableConfig.COMMON.maxEnergyStored.get() - FEStored, maxReceive);
         if (!simulate) {
             this.FEStored += toReceive;
             this.requestModelDataUpdate();
@@ -365,7 +361,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
     @Override
     public int getMaxEnergyStored() {
-        return ASTConfig.COMMON.maxEnergyStored.get();
+        return AutoSmithingTableConfig.COMMON.maxEnergyStored.get();
     }
 
     @Override
@@ -375,6 +371,6 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
     @Override
     public boolean canReceive() {
-        return FEStored < ASTConfig.COMMON.maxEnergyStored.get();
+        return FEStored < AutoSmithingTableConfig.COMMON.maxEnergyStored.get();
     }
 }

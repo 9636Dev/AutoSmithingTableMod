@@ -14,9 +14,4 @@ public class AutoSmithingContainerData extends SimpleContainerData {
     public int get(int pIndex) {
         return this.be.data.get(pIndex);
     }
-
-    @Override
-    public void set(int pIndex, int pValue) {
-        this.be.data.set(pIndex, pValue);
-    }
 }

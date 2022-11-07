@@ -4,28 +4,25 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.*;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
-public class AutoSmithingTableBlock extends HorizontalDirectionalBlock implements EntityBlock {
+public class AutoSmithingTableBlock extends Block implements EntityBlock {
 
     private static final Component CONTAINER_TITLE = Component.translatable("container.autosmithingtable.title");
 
@@ -35,7 +32,8 @@ public class AutoSmithingTableBlock extends HorizontalDirectionalBlock implement
 
     @SuppressWarnings("deprecation")
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, InteractionHand pHand, BlockHitResult pHit) {
+    public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos,
+                                          @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
 
 
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof AutoSmithingTableBlockEntity be) {
@@ -43,14 +41,14 @@ public class AutoSmithingTableBlock extends HorizontalDirectionalBlock implement
             ItemStack itemStack = player.getItemInHand(pHand);
 
             if (itemStack.isEmpty() && player.isCrouching()) {
-                int sidesConfig = be.data.get(4);
+                int sidesConfig = be.data.get(3);
                 Direction direction = pHit.getDirection();
                 int value = AutoSmithingTableBlockEntity.getSide(sidesConfig, direction);
 
                 if (value < AutoSmithingTableBlockEntity.SIDE_OUTPUT) value++;
                 else value = 0;
 
-                be.data.set(4, AutoSmithingTableBlockEntity.setSide(direction, value, sidesConfig));
+                be.data.set(3, AutoSmithingTableBlockEntity.setSide(direction, value, sidesConfig));
                 player.sendSystemMessage(Component.translatable("message.autosmithingtable.change_side_to_" + value));
 
                 return InteractionResult.SUCCESS;
@@ -86,16 +84,5 @@ public class AutoSmithingTableBlock extends HorizontalDirectionalBlock implement
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new AutoSmithingTableBlockEntity(pos, state);
-    }
-
-    @Nullable
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING);
     }
 }

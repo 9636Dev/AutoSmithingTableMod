@@ -13,19 +13,20 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 
 public class Registries {
 
     public static final CreativeModeTab TAB = new CreativeModeTab("autosmithingtable") {
         @Override
-        public ItemStack makeIcon() {
+        public @NotNull ItemStack makeIcon() {
             return AUTO_SMITHING_TABLE_ITEM.get().getDefaultInstance();
         }
     };
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, AutoSmithingTableMod.MOD_ID);
 
     public static final RegistryObject<Block> AUTO_SMITHING_TABLE = BLOCKS.register("auto_smithing_table",
-            () -> new AutoSmithingTableBlock(BlockBehaviour.Properties.of(Material.METAL).strength(1.5f)));
+            () -> new AutoSmithingTableBlock(BlockBehaviour.Properties.of(Material.METAL).strength(1.5f).requiresCorrectToolForDrops()));
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, AutoSmithingTableMod.MOD_ID);
 
@@ -34,6 +35,7 @@ public class Registries {
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, AutoSmithingTableMod.MOD_ID);
 
+    @SuppressWarnings("ConstantConditions")
     public static final RegistryObject<BlockEntityType<AutoSmithingTableBlockEntity>> AUTO_SMITHING_TABLE_ENTITY_TYPE = BLOCK_ENTITIES.register("auto_smithing_table",
             () -> BlockEntityType.Builder.of(AutoSmithingTableBlockEntity::new, AUTO_SMITHING_TABLE.get()).build(null));
 

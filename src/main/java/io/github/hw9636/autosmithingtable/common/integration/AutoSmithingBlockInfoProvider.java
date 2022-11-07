@@ -3,7 +3,7 @@ package io.github.hw9636.autosmithingtable.common.integration;
 import io.github.hw9636.autosmithingtable.AutoSmithingTableMod;
 import io.github.hw9636.autosmithingtable.common.AutoSmithingTableBlockEntity;
 import io.github.hw9636.autosmithingtable.common.Registries;
-import io.github.hw9636.autosmithingtable.common.config.ASTConfig;
+import io.github.hw9636.autosmithingtable.common.config.AutoSmithingTableConfig;
 import mcjty.theoneprobe.api.*;
 import mcjty.theoneprobe.apiimpl.styles.ProgressStyle;
 import net.minecraft.resources.ResourceLocation;
@@ -26,7 +26,7 @@ public class AutoSmithingBlockInfoProvider implements IProbeInfoProvider, Functi
         {
             ProgressStyle progressStyle = new ProgressStyle();
             progressStyle.showText(false);
-            iProbeInfo.progress(be.data.get(1), ASTConfig.COMMON.ticksPerCraft.get(), progressStyle);
+            iProbeInfo.progress(be.data.get(1), AutoSmithingTableConfig.COMMON.ticksPerCraft.get(), progressStyle);
         }
 
     }

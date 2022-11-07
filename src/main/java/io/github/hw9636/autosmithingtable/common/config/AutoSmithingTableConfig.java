@@ -3,7 +3,7 @@ package io.github.hw9636.autosmithingtable.common.config;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class ASTConfig {
+public class AutoSmithingTableConfig {
     public static class Common
     {
         private static final int defaultMaxEnergyStored = 100000;

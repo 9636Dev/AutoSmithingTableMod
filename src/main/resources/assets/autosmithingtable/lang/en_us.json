@@ -3,7 +3,7 @@
   "item.autosmithingtable.auto_smithing_table": "Auto Smithing Table",
 
   "container.autosmithingtable.title": "Upgrade Items (Auto)",
-  "itemGroup.autosmithingtable": "Auto Smithing Table",
+  "itemGroup.autosmithingtable": "AutoSmithingTable",
 
   "message.autosmithingtable.change_side_to_0": "[§eAutoSmithingTable§r] §bSide changed to: Nothing",
   "message.autosmithingtable.change_side_to_1": "[§eAutoSmithingTable§r] §bSide changed to: Input Base",

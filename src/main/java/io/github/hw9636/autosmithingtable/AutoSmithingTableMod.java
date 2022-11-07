@@ -2,10 +2,8 @@ package io.github.hw9636.autosmithingtable;
 
 import io.github.hw9636.autosmithingtable.client.AutoSmithingTableScreen;
 import io.github.hw9636.autosmithingtable.common.Registries;
-import io.github.hw9636.autosmithingtable.common.config.ASTConfig;
+import io.github.hw9636.autosmithingtable.common.config.AutoSmithingTableConfig;
 import io.github.hw9636.autosmithingtable.common.integration.AutoSmithingTableHooks;
-import io.github.hw9636.autosmithingtable.common.network.ASTPacketHandler;
-import io.github.hw9636.autosmithingtable.common.network.SideChangeMSG;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -31,7 +29,7 @@ public class AutoSmithingTableMod
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ASTConfig.COMMON_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AutoSmithingTableConfig.COMMON_SPEC);
 
         Registries.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         Registries.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -47,9 +45,6 @@ public class AutoSmithingTableMod
     private void setup(final FMLCommonSetupEvent event)
     {
         hooks.commonSetup(event);
-
-        ASTPacketHandler.INSTANCE.registerMessage(0, SideChangeMSG.class, SideChangeMSG::serialize,
-                SideChangeMSG::deserialize, SideChangeMSG::handle);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

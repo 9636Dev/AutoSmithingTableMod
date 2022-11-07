@@ -13,7 +13,6 @@ import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.zip.ZipEntry;
 
 public class AutoSmithingContainer extends AbstractContainerMenu {
 
@@ -33,7 +32,7 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
     public final ContainerData data;
 
     public AutoSmithingContainer(int id, Inventory playerInv) {
-        this(id, playerInv, BlockPos.ZERO, new SimpleContainerData(5), new ItemStackHandler(1),
+        this(id, playerInv, BlockPos.ZERO, new SimpleContainerData(4), new ItemStackHandler(1),
         new ItemStackHandler(1),new ItemStackHandler(1));
     }
 
@@ -73,20 +72,21 @@ public class AutoSmithingContainer extends AbstractContainerMenu {
 
     public static MenuConstructor getServerContainer(AutoSmithingTableBlockEntity entity, BlockPos pos) {
         return (id, playerInv, player) -> new AutoSmithingContainer(id, playerInv, pos,
-                new AutoSmithingContainerData(entity, 5), entity.baseSlots, entity.additionSlots,
+                new AutoSmithingContainerData(entity, 4), entity.baseSlots, entity.additionSlots,
                 entity.outputSlots);
     }
 
-    private boolean moveItemToContainer(ItemStack item) {
+    private void moveItemToContainer(ItemStack item) {
         Optional<Optional<UpgradeRecipe>> optionalOptionalRecipe = this.containerAccess.evaluate((level, pos) -> level.getRecipeManager().getAllRecipesFor(RecipeType.SMITHING).stream()
                     .filter((ur) -> ur.isAdditionIngredient(item)).findFirst());
         if (optionalOptionalRecipe.isPresent()) {
             Optional<UpgradeRecipe> recipeOptional = optionalOptionalRecipe.get();
             if (recipeOptional.isPresent()) {
-                return moveItemStackTo(item, ADDITION_SLOTS_START, ADDITION_SLOTS_END + 1, false);
+                moveItemStackTo(item, ADDITION_SLOTS_START, ADDITION_SLOTS_END + 1, false);
+                return;
             }
         }
-        return moveItemStackTo(item, BASE_SLOTS_START, BASE_SLOTS_END + 1, false);
+        moveItemStackTo(item, BASE_SLOTS_START, BASE_SLOTS_END + 1, false);
     }
 
     @Override
