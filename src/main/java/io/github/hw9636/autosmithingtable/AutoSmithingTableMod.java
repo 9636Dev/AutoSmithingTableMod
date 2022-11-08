@@ -3,7 +3,7 @@ package io.github.hw9636.autosmithingtable;
 import io.github.hw9636.autosmithingtable.client.AutoSmithingTableScreen;
 import io.github.hw9636.autosmithingtable.common.Registries;
 import io.github.hw9636.autosmithingtable.common.config.ASTConfig;
-import io.github.hw9636.autosmithingtable.common.integration.AutoSmithingTableHooks;
+import io.github.hw9636.autosmithingtable.common.integration.jei.AutoSmithingTableHooks;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
