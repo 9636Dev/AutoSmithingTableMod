@@ -126,7 +126,6 @@ dependencies {
     runtimeOnly fg.deobf("mcjty.theoneprobe:theoneprobe:1.18-5.1.0-8") {
         transitive = false
     }
-
 }
 
 // Example for how to get properties into the manifest for reading at runtime.

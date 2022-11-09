@@ -350,7 +350,7 @@ public class AutoSmithingTableBlockEntity extends BlockEntity implements IEnergy
 
     @Override
     public int extractEnergy(int maxExtract, boolean simulate) {
-        return maxExtract;
+        return 0;
     }
 
     @Override
