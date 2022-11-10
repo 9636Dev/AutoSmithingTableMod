@@ -1,4 +1,4 @@
-package io.github.hw9636.autosmithingtable.common.integration;
+package io.github.hw9636.autosmithingtable.common.integration.jei;
 
 import io.github.hw9636.autosmithingtable.AutoSmithingTableMod;
 import io.github.hw9636.autosmithingtable.common.Registries;

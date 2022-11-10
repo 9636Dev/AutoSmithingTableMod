@@ -1,5 +1,6 @@
 package io.github.hw9636.autosmithingtable.common.integration;
 
+import io.github.hw9636.autosmithingtable.common.integration.jei.AutoSmithingBlockInfoProvider;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -18,6 +19,6 @@ public class AutoSmithingTableHooks {
     }
 
     public void enqueueIMC(final InterModEnqueueEvent event) {
-        InterModComms.sendTo("theoneprobe", "getTheOneProbe", AutoSmithingBlockInfoProvider::new);
+        if (TOPLoaded) InterModComms.sendTo("theoneprobe", "getTheOneProbe", AutoSmithingBlockInfoProvider::new);
     }
 }
