@@ -1,4 +1,4 @@
-package io.github.hw9636.autosmithingtable.common.integration.jei;
+package io.github.hw9636.autosmithingtable.common.integration;
 
 import io.github.hw9636.autosmithingtable.common.integration.jei.AutoSmithingBlockInfoProvider;
 import net.minecraftforge.fml.InterModComms;

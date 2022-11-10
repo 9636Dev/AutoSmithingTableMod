@@ -9,5 +9,6 @@
   "message.autosmithingtable.change_side_to_1": "[§eAutoSmithingTable§r] §bSide changed to: Input Base",
   "message.autosmithingtable.change_side_to_2": "[§eAutoSmithingTable§r] §bSide changed to: Input Addition",
   "message.autosmithingtable.change_side_to_3": "[§eAutoSmithingTable§r] §bSide changed to: Output",
-  "tooltip.autosmithingtable.sides": "[Shift + R-Click] on sides to configure"
+  "tooltip.autosmithingtable.sides": "[Shift + R-Click] on sides to configure",
+  "tooltip.autosmithingtable.jade_progress": "Progress: %d"
 }

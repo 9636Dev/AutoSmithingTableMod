@@ -100,8 +100,8 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 repositories {
     maven { url = "https://dvs1.progwml6.com/files/maven/" }
     maven { url = "https://modmaven.dev" }
-    maven { url "https://cursemaven.com" }
-    maven { url "https://maven.shedaniel.me" }
+    maven { url = "https://cursemaven.com" }
+    maven { url = "https://maven.shedaniel.me" }
 }
 
 dependencies {
@@ -110,10 +110,10 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 
-    implementation fg.deobf("curse.maven:jade-324717:4035581")
+    compileOnly fg.deobf("curse.maven:jade-api-324717:${jade_api_id}")
+    //runtimeOnly fg.deobf("curse.maven:jade-324717:${jade_id}")
 
     compileOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-api-forge:6.1.315")
-    //runtimeOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:8.3.564")
 
 
     implementation fg.deobf("curse.maven:the-one-probe-245211:${top_version}")
@@ -123,6 +123,7 @@ dependencies {
     compileOnly fg.deobf("mcjty.theoneprobe:theoneprobe:1.18-5.1.0-8:api") {
         transitive = false
     }
+
     runtimeOnly fg.deobf("mcjty.theoneprobe:theoneprobe:1.18-5.1.0-8") {
         transitive = false
     }
