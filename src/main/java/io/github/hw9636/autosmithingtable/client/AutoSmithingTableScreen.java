@@ -2,6 +2,7 @@ package io.github.hw9636.autosmithingtable.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 import io.github.hw9636.autosmithingtable.AutoSmithingTableMod;
 import io.github.hw9636.autosmithingtable.common.AutoSmithingContainer;
 import io.github.hw9636.autosmithingtable.common.config.AutoSmithingTableConfig;
@@ -35,7 +36,10 @@ public class AutoSmithingTableScreen extends AbstractContainerScreen<AutoSmithin
     }
 
     private int mapNum(int toMap, int maxToMap, int maxMapped) {
-        if (toMap < 0 || toMap > maxToMap) throw new IllegalArgumentException("Argument 'toMap' is too big or too small to map");
+        if (toMap < 0 || toMap > maxToMap) {
+            LogUtils.getLogger().warn("toMap ({}) is too big or too small {}", toMap, maxToMap);
+            return 0;
+        }
         if (maxToMap == 0) return maxMapped;
         return (int)(toMap / (double)maxToMap * maxMapped + 0.5);
     }
