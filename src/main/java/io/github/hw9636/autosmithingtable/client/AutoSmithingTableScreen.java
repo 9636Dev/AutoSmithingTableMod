@@ -61,7 +61,7 @@ public class AutoSmithingTableScreen extends AbstractContainerScreen<AutoSmithin
 
         if (isIn(mx, my, i + ENERGY_BAR_ONS_LEFT,j + ENERGY_BAR_ONS_TOP,
                 i + ENERGY_BAR_ONS_LEFT + ENERGY_BAR_WIDTH, j + ENERGY_BAR_ONS_TOP + ENERGY_BAR_HEIGHT)) {
-            renderComponentTooltip(stack, List.of(new TextComponent((this.menu.data.get(0) << 16 | this.menu.data.get(1)) + "/" + ASTConfig.COMMON.maxEnergyStored.get())), mx, my);
+            renderComponentTooltip(stack, List.of(new TextComponent((this.menu.data.get(0) << 16 | Short.toUnsignedInt((short)menu.data.get(1))) + "/" + ASTConfig.COMMON.maxEnergyStored.get())), mx, my);
         }
     }
 
@@ -81,7 +81,7 @@ public class AutoSmithingTableScreen extends AbstractContainerScreen<AutoSmithin
                 PROGRESS_BAR_OFS_TOP, mapNum(menu.data.get(2) ,ASTConfig.COMMON.ticksPerCraft.get(),
                         PROGRESS_BAR_WIDTH),PROGRESS_BAR_HEIGHT);
 
-        int mappedY = mapNum((menu.data.get(0) << 16) | menu.data.get(1), ASTConfig.COMMON.maxEnergyStored.get(), ENERGY_BAR_HEIGHT);
+        int mappedY = mapNum((menu.data.get(0) << 16) | Short.toUnsignedInt((short)menu.data.get(1)), ASTConfig.COMMON.maxEnergyStored.get(), ENERGY_BAR_HEIGHT);
         this.blit(stack, i + ENERGY_BAR_ONS_LEFT, j + ENERGY_BAR_ONS_TOP + ENERGY_BAR_HEIGHT - mappedY,
                 ENERGY_BAR_OFS_LEFT, ENERGY_BAR_OFS_TOP + ENERGY_BAR_HEIGHT - mappedY, ENERGY_BAR_WIDTH, mappedY);
     }
