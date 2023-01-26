@@ -37,7 +37,7 @@ public class AutoSmithingTableScreen extends AbstractContainerScreen<AutoSmithin
 
     private int mapNum(int toMap, int maxToMap, int maxMapped) {
         if (toMap < 0 || toMap > maxToMap) {
-            LogUtils.getLogger().warn("toMap ({}) is too big or too small {}", toMap, maxToMap);
+            LogUtils.getLogger().debug("toMap ({}) is too big or too small {}", toMap, maxToMap);
             return 0;
         }
         if (maxToMap == 0) return maxMapped;
@@ -60,7 +60,7 @@ public class AutoSmithingTableScreen extends AbstractContainerScreen<AutoSmithin
 
         if (isIn(mx, my, i + ENERGY_BAR_ONS_LEFT,j + ENERGY_BAR_ONS_TOP,
                 i + ENERGY_BAR_ONS_LEFT + ENERGY_BAR_WIDTH, j + ENERGY_BAR_ONS_TOP + ENERGY_BAR_HEIGHT)) {
-            renderComponentTooltip(stack, List.of(Component.literal((this.menu.data.get(0) << 16 | this.menu.data.get(1)) + "/" + AutoSmithingTableConfig.COMMON.maxEnergyStored.get())), mx, my);
+            renderComponentTooltip(stack, List.of(Component.literal(((this.menu.data.get(0) << 16) | this.menu.data.get(1)) + "/" + AutoSmithingTableConfig.COMMON.maxEnergyStored.get())), mx, my);
         }
 
         this.renderables.forEach((w) -> w.render(stack, mx, my, pPartialTick));
