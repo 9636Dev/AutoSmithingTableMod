@@ -12,7 +12,7 @@ Currently, timing and energy costs are applied to all recipes, but this will be 
 A full rewrite of AutoSmithingTable is currently in progress. The aim of the rewrite is to provide better user experience (UX) and an easier-to-use interface.
 
 Auto Smithing Table will be ported to 1.20 **as soon as possible**, but due to the high number of changes in the smithing mechanics, this could take some time.
-Backporting to any versions before 1.16.5 is currently not being considered, and the backport to 1.16.5 will be released after the 1.20 release. 
+The backport to 1.16.5 will be released after the 1.20 release. 
 
 ## Addons / Api
 
