@@ -1,0 +1,13 @@
+{
+  "block.autosmithingtable.auto_smithing_table": "Table de forge (Auto)",
+  "item.autosmithingtable.auto_smithing_table": "Table de forge (Auto)",
+
+  "container.autosmithingtable.title": " Améliorez objets(Auto)",
+  "itemGroup.autosmithingtable": "Auto table de forge",
+
+  "message.autosmithingtable.change_side_to_0": "[§eTableDeForge§r] §bCôtés changés en: Rien",
+  "message.autosmithingtable.change_side_to_1": "[§eTableDeForge§r] §bCôtés changés en: Base d'entrée",
+  "message.autosmithingtable.change_side_to_2": "[§eTableDeForge§r] §bCôtés changés en: Ajout d'entrée",
+  "message.autosmithingtable.change_side_to_3": "[§eTableDeForge§r] §bCôtés changés en: Sortie",
+  "tooltip.autosmithingtable.sides": "[Shift + R-Click] sur les côtés pour configurer"
+}
