@@ -1,4 +1,6 @@
-# Auto Smithing Table Mod
+# Auto Smithing Table Mod (Legacy Source Code)
+
+New source code at: [HW9636/AutoSmithingTableRewrite](https://github.com/HW9636/AutoSmithingTableRewrite)
 
 Auto Smithing Table is a mod that adds additional functionality for the **smithing** function in minecraft. Currently, there are only versions for *1.18* and *1.19*. 
 
